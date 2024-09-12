@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -15,7 +16,7 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 	},
 	{
 		Name:    "Create Account",
-		Command: func() { fmt.Println("Create") },
+		Command: CreateAccount,
 	},
 	{
 		Name:    "Exit",
@@ -24,15 +25,23 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 }
 
 func main() {
-	Run("clear")
-	fmt.Println("Christ is King!")
-	fmt.Println("\nWelcome to Folklore!")
-	goToYourMenu.Menu(startMenuOptions)
+	for {
+		Run("clear")
+		fmt.Println("Christ is King!")
+		fmt.Println("\nWelcome to Folklore!")
+		goToYourMenu.Menu(startMenuOptions)
+	}
 }
 
 func CreateAccount() {
 	Run("clear")
 	fmt.Println("Create an Account")
+	prompt := bufio.NewScanner(os.Stdin)
+	fmt.Print("\nEnter a username > ")
+	prompt.Scan()
+	input := prompt.Text()
+	fmt.Println(input)
+	prompt.Scan()
 }
 
 func Run(program string, args ...string) {
