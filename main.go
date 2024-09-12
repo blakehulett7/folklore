@@ -17,6 +17,10 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 		Name:    "Create Account",
 		Command: func() { fmt.Println("Create") },
 	},
+	{
+		Name:    "Exit",
+		Command: func() { os.Exit(0) },
+	},
 }
 
 func main() {
@@ -24,6 +28,11 @@ func main() {
 	fmt.Println("Christ is King!")
 	fmt.Println("\nWelcome to Folklore!")
 	goToYourMenu.Menu(startMenuOptions)
+}
+
+func CreateAccount() {
+	Run("clear")
+	fmt.Println("Create an Account")
 }
 
 func Run(program string, args ...string) {
