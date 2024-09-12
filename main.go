@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/blakehulett7/goToYourMenu"
 )
@@ -33,19 +34,35 @@ func main() {
 	}
 }
 
+func Run(program string, args ...string) {
+	command := exec.Command(program, args...)
+	command.Stdout = os.Stdout
+	command.Run()
+}
+
+func IsValidInput(input string) bool {
+	if strings.Contains(input, ";") {
+		return false
+	}
+	return true
+}
+
 func CreateAccount() {
 	Run("clear")
 	fmt.Println("Create an Account")
 	prompt := bufio.NewScanner(os.Stdin)
 	fmt.Print("\nEnter a username > ")
 	prompt.Scan()
-	input := prompt.Text()
-	fmt.Println(input)
+	username := prompt.Text()
+	if !IsValidInput(username) {
+		fmt.Println("';' character not allowed...")
+		prompt.Scan()
+		return
+	}
+	fmt.Println(username)
+	fmt.Print("Enter a password > ")
 	prompt.Scan()
-}
-
-func Run(program string, args ...string) {
-	command := exec.Command(program, args...)
-	command.Stdout = os.Stdout
-	command.Run()
+	password := prompt.Text()
+	fmt.Println(password)
+	prompt.Scan()
 }
