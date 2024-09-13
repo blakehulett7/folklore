@@ -48,21 +48,29 @@ func IsValidInput(input string) bool {
 }
 
 func CreateAccount() {
-	Run("clear")
-	fmt.Println("Create an Account")
 	prompt := bufio.NewScanner(os.Stdin)
-	fmt.Print("\nEnter a username > ")
-	prompt.Scan()
-	username := prompt.Text()
-	if !IsValidInput(username) {
-		fmt.Println("';' character not allowed...")
+	var username string
+	var password string
+	for {
+		Run("clear")
+		fmt.Println("Create an Account")
+		fmt.Print("\nEnter a username > ")
 		prompt.Scan()
-		return
+		username = prompt.Text()
+		if !IsValidInput(username) {
+			fmt.Println("';' character not allowed...")
+			prompt.Scan()
+			continue
+		}
+		fmt.Println(username)
+		break
 	}
-	fmt.Println(username)
-	fmt.Print("Enter a password > ")
-	prompt.Scan()
-	password := prompt.Text()
-	fmt.Println(password)
-	prompt.Scan()
+	for {
+		fmt.Print("Enter a password > ")
+		prompt.Scan()
+		password = prompt.Text()
+		fmt.Println(password)
+		prompt.Scan()
+		break
+	}
 }
