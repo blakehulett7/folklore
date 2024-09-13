@@ -2,7 +2,10 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -24,6 +27,9 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 		Command: func() { os.Exit(0) },
 	},
 }
+
+const hostUrl = "http://localhost:8080"
+const hostVersion = "v1"
 
 func main() {
 	for {
@@ -48,6 +54,28 @@ func IsValidInput(input string) bool {
 }
 
 func CreateAccount() {
+	username, password := CreateUsernameAndPassword()
+	payloadStruct := struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}{username, password}
+	payload, err := json.Marshal(payloadStruct)
+	if err != nil {
+		fmt.Println("couldn't marshal json:", err)
+		return
+	}
+	requestURL := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
+	req, err := http.NewRequest("POST", requestURL, bytes.NewBuffer(payload))
+	if err != nil {
+		fmt.Println("couldn't create http request:", err)
+		return
+	}
+	res, err := http.DefaultClient.Do(req)
+	fmt.Println("Header:", res.Header)
+	fmt.Println("Body:", res.Body)
+}
+
+func CreateUsernameAndPassword() (string, string) {
 	prompt := bufio.NewScanner(os.Stdin)
 	var username string
 	var password string
@@ -62,15 +90,10 @@ func CreateAccount() {
 			prompt.Scan()
 			continue
 		}
-		fmt.Println(username)
 		break
 	}
-	for {
-		fmt.Print("Enter a password > ")
-		prompt.Scan()
-		password = prompt.Text()
-		fmt.Println(password)
-		prompt.Scan()
-		break
-	}
+	fmt.Print("Enter a password > ")
+	prompt.Scan()
+	password = prompt.Text()
+	return username, password
 }
