@@ -71,8 +71,10 @@ func CreateAccount() {
 		return
 	}
 	res, err := http.DefaultClient.Do(req)
-	fmt.Println("Header:", res.Header)
+	fmt.Println("Status:", res.Status)
 	fmt.Println("Body:", res.Body)
+	prompt := bufio.NewScanner(os.Stdin)
+	prompt.Scan()
 }
 
 func CreateUsernameAndPassword() (string, string) {
