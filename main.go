@@ -30,6 +30,7 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 
 const hostUrl = "http://localhost:8080"
 const hostVersion = "v1"
+const maxPermissions = 0777
 
 func main() {
 	for {
@@ -62,7 +63,8 @@ func CreateAccount() {
 	}{}
 	json.NewDecoder(res.Body).Decode(&resStruct)
 	fmt.Println("Status:", res.Status)
-	fmt.Println("Body:", resStruct)
+	credentials := fmt.Sprintf("JWT=%v\nREFRESH_TOKEN=%v", resStruct.Token, resStruct.RefreshToken)
+	os.WriteFile(".env", []byte(credentials), maxPermissions)
 	prompt := bufio.NewScanner(os.Stdin)
 	prompt.Scan()
 }
