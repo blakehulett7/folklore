@@ -55,22 +55,7 @@ func IsValidInput(input string) bool {
 
 func CreateAccount() {
 	username, password := CreateUsernameAndPassword()
-	payloadStruct := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}{username, password}
-	payload, err := json.Marshal(payloadStruct)
-	if err != nil {
-		fmt.Println("couldn't marshal json:", err)
-		return
-	}
-	requestURL := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
-	req, err := http.NewRequest("POST", requestURL, bytes.NewBuffer(payload))
-	if err != nil {
-		fmt.Println("couldn't create http request:", err)
-		return
-	}
-	res, err := http.DefaultClient.Do(req)
+	res := SendUsernameAndPasswordToServer(username, password)
 	fmt.Println("Status:", res.Status)
 	fmt.Println("Body:", res.Body)
 	prompt := bufio.NewScanner(os.Stdin)
@@ -98,4 +83,28 @@ func CreateUsernameAndPassword() (string, string) {
 	prompt.Scan()
 	password = prompt.Text()
 	return username, password
+}
+
+func SendUsernameAndPasswordToServer(username, password string) *http.Response {
+	payloadStruct := struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}{username, password}
+	payload, err := json.Marshal(payloadStruct)
+	if err != nil {
+		fmt.Println("couldn't marshal json:", err)
+		return nil
+	}
+	requestURL := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
+	req, err := http.NewRequest("POST", requestURL, bytes.NewBuffer(payload))
+	if err != nil {
+		fmt.Println("couldn't create http request:", err)
+		return nil
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("couldn't execute http request:", err)
+		return nil
+	}
+	return res
 }
