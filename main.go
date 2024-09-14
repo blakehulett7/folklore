@@ -56,8 +56,13 @@ func IsValidInput(input string) bool {
 func CreateAccount() {
 	username, password := CreateUsernameAndPassword()
 	res := SendUsernameAndPasswordToServer(username, password)
+	resStruct := struct {
+		Token        string `json:"token"`
+		RefreshToken string `json:"refresh_token"`
+	}{}
+	json.NewDecoder(res.Body).Decode(&resStruct)
 	fmt.Println("Status:", res.Status)
-	fmt.Println("Body:", res.Body)
+	fmt.Println("Body:", resStruct)
 	prompt := bufio.NewScanner(os.Stdin)
 	prompt.Scan()
 }
