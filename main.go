@@ -75,6 +75,7 @@ func UsernameIsUnique(username string) bool {
 	res, err := http.Get(url)
 	if err != nil {
 		fmt.Println("error checking if username is unique:", err)
+		return false
 	}
 	if res.StatusCode != 200 {
 		return false
