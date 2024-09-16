@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/blakehulett7/goToYourMenu"
+	"github.com/joho/godotenv"
 )
 
 var startMenuOptions = []goToYourMenu.MenuOption{
@@ -33,6 +34,10 @@ const hostVersion = "v1"
 const maxPermissions = 0777
 
 func main() {
+	godotenv.Load()
+	token := os.Getenv("JWT")
+	fmt.Println(token)
+	bufio.NewScanner(os.Stdin).Scan()
 	for {
 		Run("clear")
 		fmt.Println("Christ is King!")
