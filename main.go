@@ -47,13 +47,6 @@ func Run(program string, args ...string) {
 	command.Run()
 }
 
-func IsValidInput(input string) bool {
-	if strings.Contains(input, ";") {
-		return false
-	}
-	return true
-}
-
 func CreateAccount() {
 	username, password := CreateUsernameAndPassword()
 	res := SendUsernameAndPasswordToServer(username, password)
@@ -69,6 +62,25 @@ func CreateAccount() {
 	prompt.Scan()
 }
 
+func IsValidInput(input string) bool {
+	if strings.Contains(input, ";") {
+		return false
+	}
+	return true
+}
+
+func UsernameIsUnique(username string) bool {
+	url := fmt.Sprintf("%v/%v/users/%v", hostUrl, hostVersion, username)
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Println("error checking if username is unique:", err)
+	}
+	if res.StatusCode != 200 {
+		return false
+	}
+	return true
+}
+
 func CreateUsernameAndPassword() (string, string) {
 	prompt := bufio.NewScanner(os.Stdin)
 	var username string
@@ -81,6 +93,11 @@ func CreateUsernameAndPassword() (string, string) {
 		username = prompt.Text()
 		if !IsValidInput(username) {
 			fmt.Println("';' character not allowed...")
+			prompt.Scan()
+			continue
+		}
+		if !UsernameIsUnique(username) {
+			fmt.Println("username not available...")
 			prompt.Scan()
 			continue
 		}
