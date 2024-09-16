@@ -16,7 +16,7 @@ import (
 var startMenuOptions = []goToYourMenu.MenuOption{
 	{
 		Name:    "Login",
-		Command: func() { fmt.Println("Login") },
+		Command: Login,
 	},
 	{
 		Name:    "Create Account",
@@ -70,6 +70,7 @@ func IsValidInput(input string) bool {
 }
 
 func UsernameIsUnique(username string) bool {
+	// The thought just occurred to me that I could also just use the UNIQUE constraint in the Sqlite DB instead...
 	url := fmt.Sprintf("%v/%v/users/%v", hostUrl, hostVersion, username)
 	res, err := http.Get(url)
 	if err != nil {
@@ -131,4 +132,34 @@ func SendUsernameAndPasswordToServer(username, password string) *http.Response {
 		return nil
 	}
 	return res
+}
+
+func Login() {
+	username, password := GetUsernameAndPassword()
+	fmt.Println(username, password)
+	prompt := bufio.NewScanner(os.Stdin)
+	prompt.Scan()
+}
+
+func GetUsernameAndPassword() (string, string) {
+	prompt := bufio.NewScanner(os.Stdin)
+	var username string
+	var password string
+	for {
+		Run("clear")
+		fmt.Println("Login")
+		fmt.Print("\nUsername > ")
+		prompt.Scan()
+		username = prompt.Text()
+		if !IsValidInput(username) {
+			fmt.Println("';' character not allowed")
+			prompt.Scan()
+			continue
+		}
+		fmt.Print("Password > ")
+		prompt.Scan()
+		password = prompt.Text()
+		break
+	}
+	return username, password
 }
