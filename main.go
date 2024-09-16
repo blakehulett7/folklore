@@ -157,6 +157,11 @@ func GetUsernameAndPassword() (string, string) {
 			prompt.Scan()
 			continue
 		}
+		if UsernameIsUnique(username) {
+			fmt.Println("username not found... try 'Create Account'")
+			prompt.Scan()
+			continue
+		}
 		fmt.Print("Password > ")
 		prompt.Scan()
 		password = prompt.Text()
