@@ -138,6 +138,9 @@ func SendUsernameAndPasswordToServer(username, password, endpoint string) *http.
 func Login() {
 	prompt := bufio.NewScanner(os.Stdin)
 	username, password := GetUsernameAndPassword()
+	if username == "" {
+		return
+	}
 	res := SendUsernameAndPasswordToServer(username, password, "login")
 	if res.StatusCode == 401 {
 		fmt.Println("Incorrect password...")
@@ -178,7 +181,7 @@ func GetUsernameAndPassword() (string, string) {
 		if UsernameIsUnique(username) {
 			fmt.Println("username not found... try 'Create Account'")
 			prompt.Scan()
-			continue
+			return "", ""
 		}
 		fmt.Print("Password > ")
 		prompt.Scan()
