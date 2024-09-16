@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -33,10 +34,24 @@ const hostUrl = "http://localhost:8080"
 const hostVersion = "v1"
 const maxPermissions = 0777
 
+var errBadToken = errors.New("bad token")
+
+type User struct {
+	Id           string `json:"id"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 func main() {
 	godotenv.Load()
 	token := os.Getenv("JWT")
-	fmt.Println(token)
+	var user User
+	var err error
+	if token != "" {
+		user, err = GetUser()
+	}
+	fmt.Println(user, err)
 	bufio.NewScanner(os.Stdin).Scan()
 	for {
 		Run("clear")
@@ -194,4 +209,24 @@ func GetUsernameAndPassword() (string, string) {
 		break
 	}
 	return username, password
+}
+
+func GetUser() (User, error) {
+	token := os.Getenv("JWT")
+	url := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
+	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		fmt.Println("error creating request:", err)
+	}
+	req.Header.Add("Authorization", token)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("error executing request:", err)
+	}
+	if res.StatusCode == 401 {
+		return User{}, errBadToken
+	}
+	user := User{}
+	err = json.NewDecoder(res.Body).Decode(&user)
+	return user, nil
 }
