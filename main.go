@@ -49,7 +49,7 @@ func Run(program string, args ...string) {
 
 func CreateAccount() {
 	username, password := CreateUsernameAndPassword()
-	res := SendUsernameAndPasswordToServer(username, password)
+	res := SendUsernameAndPasswordToServer(username, password, "users")
 	resStruct := struct {
 		Token        string `json:"token"`
 		RefreshToken string `json:"refresh_token"`
@@ -111,7 +111,7 @@ func CreateUsernameAndPassword() (string, string) {
 	return username, password
 }
 
-func SendUsernameAndPasswordToServer(username, password string) *http.Response {
+func SendUsernameAndPasswordToServer(username, password, endpoint string) *http.Response {
 	payloadStruct := struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -121,7 +121,7 @@ func SendUsernameAndPasswordToServer(username, password string) *http.Response {
 		fmt.Println("couldn't marshal json:", err)
 		return nil
 	}
-	requestURL := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
+	requestURL := fmt.Sprintf("%v/%v/%v", hostUrl, hostVersion, endpoint)
 	req, err := http.NewRequest("POST", requestURL, bytes.NewBuffer(payload))
 	if err != nil {
 		fmt.Println("couldn't create http request:", err)
@@ -136,9 +136,27 @@ func SendUsernameAndPasswordToServer(username, password string) *http.Response {
 }
 
 func Login() {
-	username, password := GetUsernameAndPassword()
-	fmt.Println(username, password)
 	prompt := bufio.NewScanner(os.Stdin)
+	username, password := GetUsernameAndPassword()
+	res := SendUsernameAndPasswordToServer(username, password, "login")
+	if res.StatusCode == 401 {
+		fmt.Println("Incorrect password...")
+		prompt.Scan()
+		return
+	}
+	credentials := struct {
+		JWT          string `json:"jwt"`
+		RefreshToken string `json:"refresh_token"`
+	}{}
+	err := json.NewDecoder(res.Body).Decode(&credentials)
+	if err != nil {
+		fmt.Println("error can't decode response:", err)
+		prompt.Scan()
+		return
+	}
+	fmt.Println("Login successful!")
+	envString := fmt.Sprintf("JWT=%v\nREFRESH_TOKEN=%v", credentials.JWT, credentials.RefreshToken)
+	os.WriteFile(".env", []byte(envString), maxPermissions)
 	prompt.Scan()
 }
 
