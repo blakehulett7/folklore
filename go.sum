@@ -2,5 +2,7 @@ github.com/blakehulett7/goToYourMenu v0.0.0-20240912212502-22119d069559 h1:w1VaW
 github.com/blakehulett7/goToYourMenu v0.0.0-20240912212502-22119d069559/go.mod h1:7ci6fyXDPLq4kGVl76LVUEPbuukZLdkCuu8mV/LNmUo=
 github.com/blakehulett7/goToYourMenu v0.0.0-20240916142513-a5b0820e0aa1 h1:TXKWZDCMMwbLnFs6chlk4G0scj4nkqiVwAs3ucis+A0=
 github.com/blakehulett7/goToYourMenu v0.0.0-20240916142513-a5b0820e0aa1/go.mod h1:7ci6fyXDPLq4kGVl76LVUEPbuukZLdkCuu8mV/LNmUo=
+github.com/blakehulett7/goToYourMenu v0.0.0-20240919180016-00709bee45a9 h1:M2x/BCVlW/RuIg48jiUAVZVsECRT+lz+7GSyfImriRM=
+github.com/blakehulett7/goToYourMenu v0.0.0-20240919180016-00709bee45a9/go.mod h1:7ci6fyXDPLq4kGVl76LVUEPbuukZLdkCuu8mV/LNmUo=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=

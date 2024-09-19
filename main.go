@@ -16,21 +16,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var startMenuOptions = []goToYourMenu.MenuOption{
-	{
-		Name:    "Login",
-		Command: Login,
-	},
-	{
-		Name:    "Create Account",
-		Command: CreateAccount,
-	},
-	{
-		Name:    "Exit",
-		Command: func() { os.Exit(0) },
-	},
-}
-
 const hostUrl = "http://localhost:8080"
 const hostVersion = "v1"
 const maxPermissions = 0777
@@ -53,8 +38,9 @@ func main() {
 	if token != "" {
 		user, err = GetUser()
 	}
-	fmt.Println(user, err)
-	bufio.NewScanner(os.Stdin).Scan()
+	if err != nil {
+		fmt.Println("couldn't get user, error:", err)
+	}
 	if !reflect.DeepEqual(user, User{}) {
 		LaunchDashboard(user)
 	}
@@ -62,7 +48,16 @@ func main() {
 		Run("clear")
 		fmt.Println("Christ is King!")
 		fmt.Println("\nWelcome to Folklore!")
-		goToYourMenu.Menu(startMenuOptions)
+		command := goToYourMenu.Menu(startMenuOptions)
+		fmt.Println(command)
+		if command != "Login" {
+			continue
+		}
+		user, err := GetUser()
+		if err != nil {
+			fmt.Println("couldn't get user, error:", err)
+		}
+		LaunchDashboard(user)
 	}
 }
 
@@ -241,7 +236,9 @@ func LaunchDashboard(user User) {
 		Run("clear")
 		fmt.Println("Christ is King!")
 		fmt.Println("\nWelcome to Folklore,", user.Username)
-		fmt.Println("Listening Streak:", "{streak}")
+		fmt.Println("Listening Streak:", user.ListeningStreak)
+		fmt.Println("\nWhat would you like to do?")
+		goToYourMenu.Menu(dashboardOptions)
 		bufio.NewScanner(os.Stdin).Scan()
 		break
 	}
