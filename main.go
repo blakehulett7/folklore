@@ -38,10 +38,11 @@ const maxPermissions = 0777
 var errBadToken = errors.New("bad token")
 
 type User struct {
-	Id           string `json:"id"`
-	Username     string `json:"username"`
-	Password     string `json:"password"`
-	RefreshToken string `json:"refresh_token"`
+	Id              string `json:"id"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	RefreshToken    string `json:"refresh_token"`
+	ListeningStreak string `json:"listening_streak"`
 }
 
 func main() {
