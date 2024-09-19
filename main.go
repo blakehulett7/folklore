@@ -274,9 +274,20 @@ func LaunchDashboard(user User) {
 }
 
 func (user User) AddLanguage() {
+	Run("clear")
+	fmt.Println("Christ is King!")
+	fmt.Println("\nWelcome to Folklore,", user.Username)
+	fmt.Println("Listening Streak:", user.ListeningStreak)
+	fmt.Println(user.Languages)
+	fmt.Println("\nChoose a language to add")
+	options := []goToYourMenu.MenuOption{}
 	for _, language := range languages {
 		if !slices.Contains(user.Languages, language) {
-			fmt.Println(language)
+			options = append(options, goToYourMenu.MenuOption{
+				Name:    language,
+				Command: func() {},
+			})
 		}
 	}
+	goToYourMenu.Menu(options)
 }
