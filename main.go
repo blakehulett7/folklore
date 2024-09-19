@@ -273,7 +273,7 @@ func LaunchDashboard(user User) {
 	}
 }
 
-func (user User) AddLanguage() {
+func (user *User) AddLanguage() {
 	Run("clear")
 	fmt.Println("Christ is King!")
 	fmt.Println("\nWelcome to Folklore,", user.Username)
@@ -289,5 +289,46 @@ func (user User) AddLanguage() {
 			})
 		}
 	}
-	goToYourMenu.Menu(options)
+	options = append(options, goToYourMenu.MenuOption{Name: "Go Back", Command: func() {}})
+	languageToAdd := goToYourMenu.Menu(options)
+	if languageToAdd == "Go Back" {
+		return
+	}
+	_, err := SendLanguageRequest(languageToAdd)
+	if err != nil {
+		fmt.Println("Couldn't add language, error:", err)
+		return
+	}
+	user.Languages = append(user.Languages, languageToAdd)
+}
+
+func SendLanguageRequest(languagetoAdd string) (User, error) {
+	token := os.Getenv("JWT")
+	payloadStruct := struct {
+		Name string `json:"name"`
+	}{languagetoAdd}
+	payload, err := json.Marshal(payloadStruct)
+	if err != nil {
+		fmt.Println("couldn't marshal json:", err)
+		return User{}, err
+	}
+	requestURL := fmt.Sprintf("%v/%v/users_languages", hostUrl, hostVersion)
+	req, err := http.NewRequest("POST", requestURL, bytes.NewBuffer(payload))
+	req.Header.Add("Authorization", token)
+	if err != nil {
+		fmt.Println("couldn't create http request:", err)
+		return User{}, err
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("couldn't execute http request:", err)
+		return User{}, err
+	}
+	if res.StatusCode == 401 {
+		fmt.Println("Error authenticating")
+		return User{}, errBadToken
+	}
+	user := User{}
+	json.NewDecoder(res.Body).Decode(&user)
+	return user, nil
 }
