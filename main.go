@@ -34,33 +34,33 @@ type User struct {
 }
 
 func main() {
-	godotenv.Load()
-	token := os.Getenv("JWT")
-	var user User
-	var err error
-	if token != "" {
-		user, err = GetUser()
-	}
-	if err != nil {
-		fmt.Println("couldn't get user, error:", err)
-	}
-	if !reflect.DeepEqual(user, User{}) {
-		LaunchDashboard(user)
-	}
 	for {
-		Run("clear")
-		fmt.Println("Christ is King!")
-		fmt.Println("\nWelcome to Folklore!")
-		command := goToYourMenu.Menu(startMenuOptions)
-		fmt.Println(command)
-		if command != "Login" {
-			continue
+		godotenv.Load()
+		token := os.Getenv("JWT")
+		var user User
+		var err error
+		if token != "" {
+			user, err = GetUser(token)
 		}
-		user, err := GetUser()
 		if err != nil {
 			fmt.Println("couldn't get user, error:", err)
 		}
-		LaunchDashboard(user)
+		if !reflect.DeepEqual(user, User{}) {
+			LaunchDashboard(user)
+		}
+		for {
+			Run("clear")
+			fmt.Println("Christ is King!")
+			fmt.Println("\nWelcome to Folklore!")
+			command := goToYourMenu.Menu(startMenuOptions)
+			if command != "Login" {
+				continue
+			}
+			if err != nil {
+				fmt.Println("couldn't get user, error:", err)
+			}
+			break
+		}
 	}
 }
 
@@ -183,7 +183,8 @@ func Login() {
 	fmt.Println("Login successful!")
 	envString := fmt.Sprintf("JWT=%v\nREFRESH_TOKEN=%v", credentials.JWT, credentials.RefreshToken)
 	os.WriteFile(".env", []byte(envString), maxPermissions)
-	prompt.Scan()
+	os.Setenv("JWT", credentials.JWT)
+	os.Setenv("REFRESH_TOKEN", credentials.RefreshToken)
 }
 
 func GetUsernameAndPassword() (string, string) {
@@ -214,8 +215,7 @@ func GetUsernameAndPassword() (string, string) {
 	return username, password
 }
 
-func GetUser() (User, error) {
-	token := os.Getenv("JWT")
+func GetUser(token string) (User, error) {
 	url := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte("")))
 	if err != nil {
