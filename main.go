@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 
 	"github.com/blakehulett7/goToYourMenu"
@@ -53,6 +54,9 @@ func main() {
 	}
 	fmt.Println(user, err)
 	bufio.NewScanner(os.Stdin).Scan()
+	if !reflect.DeepEqual(user, User{}) {
+		LaunchDashboard(user)
+	}
 	for {
 		Run("clear")
 		fmt.Println("Christ is King!")
@@ -229,4 +233,15 @@ func GetUser() (User, error) {
 	user := User{}
 	err = json.NewDecoder(res.Body).Decode(&user)
 	return user, nil
+}
+
+func LaunchDashboard(user User) {
+	for {
+		Run("clear")
+		fmt.Println("Christ is King!")
+		fmt.Println("\nWelcome to Folklore,", user.Username)
+		fmt.Println("Listening Streak:", "{streak}")
+		bufio.NewScanner(os.Stdin).Scan()
+		break
+	}
 }
