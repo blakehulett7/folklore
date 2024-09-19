@@ -224,6 +224,7 @@ func GetUser() (User, error) {
 		fmt.Println("error executing request:", err)
 	}
 	if res.StatusCode == 401 {
+		//user the refresh token and try once more
 		return User{}, errBadToken
 	}
 	user := User{}
