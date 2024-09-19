@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/blakehulett7/goToYourMenu"
@@ -20,14 +21,16 @@ const hostUrl = "http://localhost:8080"
 const hostVersion = "v1"
 const maxPermissions = 0777
 
+var languages = []string{"Italian", "Spanish", "French"}
 var errBadToken = errors.New("bad token")
 
 type User struct {
-	Id              string `json:"id"`
-	Username        string `json:"username"`
-	Password        string `json:"password"`
-	RefreshToken    string `json:"refresh_token"`
-	ListeningStreak string `json:"listening_streak"`
+	Id              string   `json:"id"`
+	Username        string   `json:"username"`
+	Password        string   `json:"password"`
+	RefreshToken    string   `json:"refresh_token"`
+	ListeningStreak string   `json:"listening_streak"`
+	Languages       []string `json:"languages"`
 }
 
 func main() {
@@ -238,9 +241,42 @@ func LaunchDashboard(user User) {
 		fmt.Println("Christ is King!")
 		fmt.Println("\nWelcome to Folklore,", user.Username)
 		fmt.Println("Listening Streak:", user.ListeningStreak)
+		fmt.Println(user.Languages)
 		fmt.Println("\nWhat would you like to do?")
-		goToYourMenu.Menu(dashboardOptions)
+		var dashboardOptions = []goToYourMenu.MenuOption{
+			{
+				Name:    "Review Your Languages",
+				Command: func() { fmt.Println("Not implemented") },
+			},
+			{
+				Name:    "Add New Language",
+				Command: user.AddLanguage,
+			},
+			{
+				Name:    "Remove a Language",
+				Command: func() { fmt.Println("Not implemented") },
+			},
+			{
+				Name:    "Logout",
+				Command: Logout,
+			},
+			{
+				Name:    "Exit",
+				Command: func() { os.Exit(0) },
+			},
+		}
+		command := goToYourMenu.Menu(dashboardOptions)
+		if command == "Logout" {
+			break
+		}
 		bufio.NewScanner(os.Stdin).Scan()
-		break
+	}
+}
+
+func (user User) AddLanguage() {
+	for _, language := range languages {
+		if !slices.Contains(user.Languages, language) {
+			fmt.Println(language)
+		}
 	}
 }
