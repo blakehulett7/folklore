@@ -294,12 +294,12 @@ func (user *User) AddLanguage() {
 	if languageToAdd == "Go Back" {
 		return
 	}
-	_, err := SendLanguageRequest(languageToAdd)
+	updatedUser, err := SendLanguageRequest(languageToAdd)
 	if err != nil {
 		fmt.Println("Couldn't add language, error:", err)
 		return
 	}
-	user.Languages = append(user.Languages, languageToAdd)
+	user.Languages = updatedUser.Languages
 }
 
 func SendLanguageRequest(languagetoAdd string) (User, error) {
