@@ -254,7 +254,7 @@ func LaunchDashboard(user User) {
 			},
 			{
 				Name:    "Remove a Language",
-				Command: func() { fmt.Println("Not implemented") },
+				Command: user.RemoveLanguage,
 			},
 			{
 				Name:    "Logout",
@@ -330,5 +330,55 @@ func SendLanguageRequest(languagetoAdd string) (User, error) {
 	}
 	user := User{}
 	json.NewDecoder(res.Body).Decode(&user)
+	return user, nil
+}
+
+func (user *User) RemoveLanguage() {
+	Run("clear")
+	fmt.Println("Christ is King!")
+	fmt.Println("\nWelcome to Folklore,", user.Username)
+	fmt.Println("Listening Streak:", user.ListeningStreak)
+	fmt.Println(user.Languages)
+	fmt.Println("\nChoose a language to remove")
+	options := []goToYourMenu.MenuOption{}
+	for _, language := range user.Languages {
+		options = append(options, goToYourMenu.MenuOption{
+			Name:    language,
+			Command: func() {},
+		})
+	}
+	options = append(options, goToYourMenu.MenuOption{Name: "Go Back", Command: func() {}})
+	languageToRemove := goToYourMenu.Menu(options)
+	if languageToRemove == "Go Back" {
+		return
+	}
+	updatedUser, err := SendRemoveLanguageRequest(languageToRemove)
+	if err != nil {
+		fmt.Println("Couldn't remove language, error:", err)
+		return
+	}
+	user.Languages = updatedUser.Languages
+}
+
+func SendRemoveLanguageRequest(languageToRemove string) (User, error) {
+	token := os.Getenv("JWT")
+	requestURL := fmt.Sprintf("%v/%v/users_languages/%v", hostUrl, hostVersion, languageToRemove)
+	req, err := http.NewRequest("DELETE", requestURL, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		fmt.Println("Couldn't generate request, error:", err)
+		return User{}, err
+	}
+	req.Header.Add("Authorization", token)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Couldn't execute request, error:", err)
+		return User{}, err
+	}
+	user := User{}
+	err = json.NewDecoder(res.Body).Decode(&user)
+	if err != nil {
+		fmt.Println("Couldn't decode response json, error:", err)
+		return User{}, err
+	}
 	return user, nil
 }
