@@ -397,5 +397,13 @@ func (user User) ReviewLanguages() {
 }
 
 func LaunchLanguagePage(user User, languageToReview string) {
-
+	Run("clear")
+	fmt.Println("Christ is King!")
+	fmt.Println("\nWelcome to Folklore,", user.Username)
+	fmt.Println("\nYour", languageToReview, "stats:")
+	fmt.Printf("   Best %v Listening Streak: {language_best_streak}\n", languageToReview)
+	fmt.Printf("   Current %v Listening Steak: {language_streak}\n", languageToReview)
+	fmt.Printf("   Number of %v Words Learned: {learned_words/100} ({percentage})\n", languageToReview)
+	fmt.Println("\nSelect an Action:")
+	goToYourMenu.Menu(reviewLanguageOptions)
 }

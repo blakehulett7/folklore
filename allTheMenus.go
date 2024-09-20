@@ -22,6 +22,21 @@ var startMenuOptions = []goToYourMenu.MenuOption{
 	},
 }
 
+var reviewLanguageOptions = []goToYourMenu.MenuOption{
+	{
+		Name:    "Listen to some Folklore",
+		Command: func() {},
+	},
+	{
+		Name:    "Review top 100 words",
+		Command: func() {},
+	},
+	{
+		Name:    "Go Back",
+		Command: func() {},
+	},
+}
+
 func Logout() {
 	exec.Command("rm", ".env").Run()
 }
