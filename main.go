@@ -70,6 +70,14 @@ func Run(program string, args ...string) {
 	command.Run()
 }
 
+func PrintTopOfPage(user User) {
+	Run("clear")
+	fmt.Println("Christ is King!")
+	fmt.Println("\nWelcome to Folklore,", user.Username)
+	fmt.Println("Highest Active Listening Streak:", user.ListeningStreak)
+	fmt.Println(user.Languages)
+}
+
 func CreateAccount() {
 	username, password := CreateUsernameAndPassword()
 	res := SendUsernameAndPasswordToServer(username, password, "users")
@@ -237,16 +245,12 @@ func GetUser(token string) (User, error) {
 
 func LaunchDashboard(user User) {
 	for {
-		Run("clear")
-		fmt.Println("Christ is King!")
-		fmt.Println("\nWelcome to Folklore,", user.Username)
-		fmt.Println("Listening Streak:", user.ListeningStreak)
-		fmt.Println(user.Languages)
+		PrintTopOfPage(user)
 		fmt.Println("\nWhat would you like to do?")
 		var dashboardOptions = []goToYourMenu.MenuOption{
 			{
 				Name:    "Review Your Languages",
-				Command: func() { fmt.Println("Not implemented") },
+				Command: user.ReviewLanguages,
 			},
 			{
 				Name:    "Add New Language",
@@ -269,16 +273,11 @@ func LaunchDashboard(user User) {
 		if command == "Logout" {
 			break
 		}
-		bufio.NewScanner(os.Stdin).Scan()
 	}
 }
 
 func (user *User) AddLanguage() {
-	Run("clear")
-	fmt.Println("Christ is King!")
-	fmt.Println("\nWelcome to Folklore,", user.Username)
-	fmt.Println("Listening Streak:", user.ListeningStreak)
-	fmt.Println(user.Languages)
+	PrintTopOfPage(*user)
 	fmt.Println("\nChoose a language to add")
 	options := []goToYourMenu.MenuOption{}
 	for _, language := range languages {
@@ -334,11 +333,7 @@ func SendLanguageRequest(languagetoAdd string) (User, error) {
 }
 
 func (user *User) RemoveLanguage() {
-	Run("clear")
-	fmt.Println("Christ is King!")
-	fmt.Println("\nWelcome to Folklore,", user.Username)
-	fmt.Println("Listening Streak:", user.ListeningStreak)
-	fmt.Println(user.Languages)
+	PrintTopOfPage(*user)
 	fmt.Println("\nChoose a language to remove")
 	options := []goToYourMenu.MenuOption{}
 	for _, language := range user.Languages {
@@ -381,4 +376,26 @@ func SendRemoveLanguageRequest(languageToRemove string) (User, error) {
 		return User{}, err
 	}
 	return user, nil
+}
+
+func (user User) ReviewLanguages() {
+	PrintTopOfPage(user)
+	fmt.Println("\nWhich language would you like to review?")
+	options := []goToYourMenu.MenuOption{}
+	for _, language := range user.Languages {
+		options = append(options, goToYourMenu.MenuOption{
+			Name:    language,
+			Command: func() {},
+		})
+	}
+	options = append(options, goToYourMenu.MenuOption{Name: "Go Back", Command: func() {}})
+	languageToReview := goToYourMenu.Menu(options)
+	if languageToReview == "Go Back" {
+		return
+	}
+	LaunchLanguagePage(user, languageToReview)
+}
+
+func LaunchLanguagePage(user User, languageToReview string) {
+
 }
