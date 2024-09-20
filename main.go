@@ -37,7 +37,7 @@ func main() {
 	for {
 		godotenv.Load()
 		token := os.Getenv("JWT")
-		var user User
+		var user User = User{}
 		var err error
 		if token != "" {
 			user, err = GetUser(token)
