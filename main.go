@@ -75,7 +75,7 @@ func PrintTopOfPage(user User) {
 	fmt.Println("Christ is King!")
 	fmt.Println("\nWelcome to Folklore,", user.Username)
 	fmt.Println("Highest Active Listening Streak:", user.ListeningStreak)
-	fmt.Println(user.Languages)
+	fmt.Println("My languages:", user.Languages)
 }
 
 func CreateAccount() {
@@ -170,6 +170,7 @@ func Login() {
 	prompt := bufio.NewScanner(os.Stdin)
 	username, password := GetUsernameAndPassword()
 	if username == "" {
+		os.Setenv("JWT", "")
 		return
 	}
 	res := SendUsernameAndPasswordToServer(username, password, "login")
