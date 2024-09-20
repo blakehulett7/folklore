@@ -176,6 +176,7 @@ func Login() {
 	res := SendUsernameAndPasswordToServer(username, password, "login")
 	if res.StatusCode == 401 {
 		fmt.Println("Incorrect password...")
+		os.Setenv("JWT", "")
 		prompt.Scan()
 		return
 	}
