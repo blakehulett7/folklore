@@ -4,6 +4,6 @@ import (
 	"testing"
 )
 
-func TestUsernameIsUnique(t *testing.T) {
-	UsernameIsUnique("FireMage")
+func TestStatRequest(t *testing.T) {
+	GetMyLanguageStats("Italian")
 }

@@ -12,6 +12,7 @@ import (
 	"reflect"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/blakehulett7/goToYourMenu"
 	"github.com/joho/godotenv"
@@ -23,6 +24,7 @@ const maxPermissions = 0777
 
 var languages = []string{"Italian", "Spanish", "French"}
 var errBadToken = errors.New("bad token")
+var errServerDown = errors.New("server down")
 
 type User struct {
 	Id              string   `json:"id"`
@@ -31,6 +33,12 @@ type User struct {
 	RefreshToken    string   `json:"refresh_token"`
 	ListeningStreak string   `json:"listening_streak"`
 	Languages       []string `json:"languages"`
+}
+
+type Stats struct {
+	BestListeningStreak    string `json:"best_listening_streak"`
+	CurrentListeningStreak string `json:"current_listening_streak"`
+	WordsLearned           string `json:"words_learned"`
 }
 
 func main() {
@@ -44,6 +52,11 @@ func main() {
 		}
 		if err != nil {
 			fmt.Println("couldn't get user, error:", err)
+			if err == errServerDown {
+				fmt.Println("Server is down, try again later!")
+				time.Sleep(time.Second)
+				os.Exit(0)
+			}
 		}
 		if !reflect.DeepEqual(user, User{}) {
 			LaunchDashboard(user)
@@ -235,6 +248,7 @@ func GetUser(token string) (User, error) {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Println("error executing request:", err)
+		return User{}, errServerDown
 	}
 	if res.StatusCode == 401 {
 		//user the refresh token and try once more
@@ -403,9 +417,24 @@ func LaunchLanguagePage(user User, languageToReview string) {
 	fmt.Println("Christ is King!")
 	fmt.Println("\nWelcome to Folklore,", user.Username)
 	fmt.Println("\nYour", languageToReview, "stats:")
+	fmt.Println("Getting your stats...")
+	time.Sleep(2 * time.Second)
+	goToYourMenu.MoveCursorUp(2)
 	fmt.Printf("   Best %v Listening Streak: {language_best_streak}\n", languageToReview)
 	fmt.Printf("   Current %v Listening Steak: {language_streak}\n", languageToReview)
 	fmt.Printf("   Number of %v Words Learned: {learned_words/100} ({percentage})\n", languageToReview)
 	fmt.Println("\nSelect an Action:")
 	goToYourMenu.Menu(reviewLanguageOptions)
+}
+
+func GetMyLanguageStats(language string) Stats {
+	token := os.Getenv("JWT")
+	reqUrl := fmt.Sprintf("%v/%v/users_languages/%v", hostUrl, hostVersion, language)
+	req, bug := http.NewRequest("GET", reqUrl, bytes.NewBuffer([]byte("")))
+	if bug != nil {
+		fmt.Println("Bug! Couldn't generate get my language stats request, error:", bug)
+	}
+	req.Header.Add("Authorization", token)
+	//res, err := http.DefaultClient.Do(req)
+	return Stats{}
 }
