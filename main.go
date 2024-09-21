@@ -437,6 +437,10 @@ func LaunchLanguagePage(user User, languageToReview string) {
 			bufio.NewScanner(os.Stdin).Scan()
 			continue
 		}
+		if command == "Review top 100 words" {
+			fmt.Println("Not implemented yet...")
+			bufio.NewScanner(os.Stdin).Scan()
+		}
 	}
 }
 
