@@ -413,18 +413,31 @@ func (user User) ReviewLanguages() {
 }
 
 func LaunchLanguagePage(user User, languageToReview string) {
-	Run("clear")
-	fmt.Println("Christ is King!")
-	fmt.Println("\nWelcome to Folklore,", user.Username)
-	fmt.Println("\nYour", languageToReview, "stats:")
-	fmt.Println("Getting your stats...")
-	stats := GetMyLanguageStats(languageToReview)
-	goToYourMenu.MoveCursorUp(2)
-	fmt.Printf("   Best %v Listening Streak: %v\n", languageToReview, stats.BestListeningStreak)
-	fmt.Printf("   Current %v Listening Steak: %v\n", languageToReview, stats.CurrentListeningStreak)
-	fmt.Printf("   Number of %v Words Learned: %v/100 (%v%%)\n", languageToReview, stats.WordsLearned, stats.WordsLearned)
-	fmt.Println("\nSelect an Action:")
-	goToYourMenu.Menu(reviewLanguageOptions)
+	for {
+		Run("clear")
+		fmt.Println("Christ is King!")
+		fmt.Println("\nWelcome to Folklore,", user.Username)
+		fmt.Println("\nYour", languageToReview, "stats:")
+		fmt.Println("Getting your stats...")
+		stats := GetMyLanguageStats(languageToReview)
+		goToYourMenu.MoveCursorUp(2)
+		fmt.Printf("   Best %v Listening Streak: %v\n", languageToReview, stats.BestListeningStreak)
+		fmt.Printf("   Current %v Listening Steak: %v\n", languageToReview, stats.CurrentListeningStreak)
+		fmt.Printf("   Number of %v Words Learned: %v/100 (%v%%)\n", languageToReview, stats.WordsLearned, stats.WordsLearned)
+		fmt.Println("\nSelect an Action:")
+		command := goToYourMenu.Menu(reviewLanguageOptions)
+		if command == "Go Back" {
+			return
+		}
+		if command == "Listen to some Folklore" {
+			url := GetListenUrl(languageToReview)
+			bashCommand := fmt.Sprintf("firefox --new-window %v", url)
+			exec.Command("bash", "-c", bashCommand).Run()
+			fmt.Println("Press ENTER when you have finished listening...")
+			bufio.NewScanner(os.Stdin).Scan()
+			continue
+		}
+	}
 }
 
 func GetMyLanguageStats(language string) Stats {
@@ -445,4 +458,26 @@ func GetMyLanguageStats(language string) Stats {
 		fmt.Println("Bug! Couldn't decode the server's response to the get my language stats request, error:", bug)
 	}
 	return stats
+}
+
+func GetListenUrl(language string) string {
+	token := os.Getenv("JWT")
+	reqUrl := fmt.Sprintf("%v/%v/listen/%v", hostUrl, hostVersion, language)
+	req, bug := http.NewRequest("GET", reqUrl, bytes.NewBuffer([]byte{}))
+	if bug != nil {
+		fmt.Println("Bug! Get listen url request failed to generate, error:", bug)
+	}
+	req.Header.Add("Authorization", token)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Couldn't execute get listen url request, error:", err)
+	}
+	var url struct {
+		Url string `json:"url"`
+	}
+	err = json.NewDecoder(res.Body).Decode(&url)
+	if err != nil {
+		fmt.Println("Couldn't decode response json for get listen url request, error:", err)
+	}
+	return url.Url
 }
