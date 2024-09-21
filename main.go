@@ -418,11 +418,11 @@ func LaunchLanguagePage(user User, languageToReview string) {
 	fmt.Println("\nWelcome to Folklore,", user.Username)
 	fmt.Println("\nYour", languageToReview, "stats:")
 	fmt.Println("Getting your stats...")
-	time.Sleep(2 * time.Second)
+	stats := GetMyLanguageStats(languageToReview)
 	goToYourMenu.MoveCursorUp(2)
-	fmt.Printf("   Best %v Listening Streak: {language_best_streak}\n", languageToReview)
-	fmt.Printf("   Current %v Listening Steak: {language_streak}\n", languageToReview)
-	fmt.Printf("   Number of %v Words Learned: {learned_words/100} ({percentage})\n", languageToReview)
+	fmt.Printf("   Best %v Listening Streak: %v\n", languageToReview, stats.BestListeningStreak)
+	fmt.Printf("   Current %v Listening Steak: %v\n", languageToReview, stats.CurrentListeningStreak)
+	fmt.Printf("   Number of %v Words Learned: %v/100 (%v%%)\n", languageToReview, stats.WordsLearned, stats.WordsLearned)
 	fmt.Println("\nSelect an Action:")
 	goToYourMenu.Menu(reviewLanguageOptions)
 }
@@ -435,6 +435,14 @@ func GetMyLanguageStats(language string) Stats {
 		fmt.Println("Bug! Couldn't generate get my language stats request, error:", bug)
 	}
 	req.Header.Add("Authorization", token)
-	//res, err := http.DefaultClient.Do(req)
-	return Stats{}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Couldn't execute get my language stats request, error:", err)
+	}
+	var stats Stats
+	bug = json.NewDecoder(res.Body).Decode(&stats)
+	if bug != nil {
+		fmt.Println("Bug! Couldn't decode the server's response to the get my language stats request, error:", bug)
+	}
+	return stats
 }
