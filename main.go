@@ -435,6 +435,7 @@ func LaunchLanguagePage(user User, languageToReview string) {
 			exec.Command("bash", "-c", bashCommand).Run()
 			fmt.Println("Press ENTER when you have finished listening...")
 			bufio.NewScanner(os.Stdin).Scan()
+			IncrementStreak(languageToReview)
 			continue
 		}
 		if command == "Review top 100 words" {
@@ -484,4 +485,20 @@ func GetListenUrl(language string) string {
 		fmt.Println("Couldn't decode response json for get listen url request, error:", err)
 	}
 	return url.Url
+}
+
+func IncrementStreak(language string) {
+	token := os.Getenv("JWT")
+	reqUrl := fmt.Sprintf("%v/%v/increment_streak/%v", hostUrl, hostVersion, language)
+	req, err := http.NewRequest("GET", reqUrl, bytes.NewBuffer([]byte{}))
+	if err != nil {
+		fmt.Println("Couldn't generate the increment streak request, error:", err)
+	}
+	req.Header.Add("Authorization", token)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Couldn't execute increment streak request, error:", err)
+	}
+	fmt.Println(res.Status)
+	bufio.NewScanner(os.Stdin).Scan()
 }
