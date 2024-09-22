@@ -63,8 +63,7 @@ func main() {
 		}
 		for {
 			Run("clear")
-			fmt.Println("Christ is King!")
-			fmt.Println("\nWelcome to Folklore!")
+			fmt.Println("Welcome to Folklore!")
 			command := goToYourMenu.Menu(startMenuOptions)
 			if command != "Login" {
 				continue
@@ -85,9 +84,8 @@ func Run(program string, args ...string) {
 
 func PrintTopOfPage(user User) {
 	Run("clear")
-	fmt.Println("Christ is King!")
-	fmt.Println("\nWelcome to Folklore,", user.Username)
-	fmt.Println("Highest Active Listening Streak:", user.ListeningStreak)
+	fmt.Println("Welcome to Folklore,", user.Username)
+	fmt.Println("\nHighest Active Listening Streak:", user.ListeningStreak)
 	fmt.Println("My languages:", user.Languages)
 }
 
