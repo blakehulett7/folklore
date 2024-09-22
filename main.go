@@ -435,7 +435,7 @@ func LaunchLanguagePage(user User, languageToReview string) {
 			exec.Command("bash", "-c", bashCommand).Run()
 			fmt.Println("Press ENTER when you have finished listening...")
 			bufio.NewScanner(os.Stdin).Scan()
-			IncrementStreak(languageToReview)
+			user.IncrementStreak(languageToReview)
 			continue
 		}
 		if command == "Review top 100 words" {
@@ -487,7 +487,7 @@ func GetListenUrl(language string) string {
 	return url.Url
 }
 
-func IncrementStreak(language string) {
+func (user *User) IncrementStreak(language string) {
 	token := os.Getenv("JWT")
 	reqUrl := fmt.Sprintf("%v/%v/increment_streak/%v", hostUrl, hostVersion, language)
 	req, err := http.NewRequest("GET", reqUrl, bytes.NewBuffer([]byte{}))
@@ -503,4 +503,12 @@ func IncrementStreak(language string) {
 		fmt.Println("BadToken")
 		bufio.NewScanner(os.Stdin).Scan()
 	}
+	var userUpdate User
+	err = json.NewDecoder(res.Body).Decode(&userUpdate)
+	if err != nil {
+		fmt.Println("Couldn't decode json response from server for realtime streak update, error:", err)
+		bufio.NewScanner(os.Stdin).Scan()
+		return
+	}
+	user.ListeningStreak = userUpdate.ListeningStreak
 }
