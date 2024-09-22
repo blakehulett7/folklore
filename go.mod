@@ -1,4 +1,4 @@
-module github.com/blakehulett7/FolkloreClient
+module github.com/blakehulett7/folklore
 
 go 1.22.3
 
