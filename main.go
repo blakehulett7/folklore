@@ -409,10 +409,10 @@ func (user User) ReviewLanguages() {
 	if languageToReview == "Go Back" {
 		return
 	}
-	LaunchLanguagePage(user, languageToReview)
+	LaunchLanguagePage(&user, languageToReview)
 }
 
-func LaunchLanguagePage(user User, languageToReview string) {
+func LaunchLanguagePage(user *User, languageToReview string) {
 	for {
 		Run("clear")
 		fmt.Println("Christ is King!")
@@ -427,6 +427,12 @@ func LaunchLanguagePage(user User, languageToReview string) {
 		fmt.Println("\nSelect an Action:")
 		command := goToYourMenu.Menu(reviewLanguageOptions)
 		if command == "Go Back" {
+			token := os.Getenv("JWT")
+			updatedUser, err := GetUser(token)
+			if err != nil {
+				return
+			}
+			user.ListeningStreak = updatedUser.ListeningStreak
 			return
 		}
 		if command == "Listen to some Folklore" {
@@ -435,7 +441,7 @@ func LaunchLanguagePage(user User, languageToReview string) {
 			exec.Command("bash", "-c", bashCommand).Run()
 			fmt.Println("Press ENTER when you have finished listening...")
 			bufio.NewScanner(os.Stdin).Scan()
-			user.IncrementStreak(languageToReview)
+			IncrementStreak(languageToReview)
 			continue
 		}
 		if command == "Review top 100 words" {
@@ -487,7 +493,7 @@ func GetListenUrl(language string) string {
 	return url.Url
 }
 
-func (user *User) IncrementStreak(language string) {
+func IncrementStreak(language string) {
 	token := os.Getenv("JWT")
 	reqUrl := fmt.Sprintf("%v/%v/increment_streak/%v", hostUrl, hostVersion, language)
 	req, err := http.NewRequest("GET", reqUrl, bytes.NewBuffer([]byte{}))
@@ -503,12 +509,6 @@ func (user *User) IncrementStreak(language string) {
 		fmt.Println("BadToken")
 		bufio.NewScanner(os.Stdin).Scan()
 	}
-	var userUpdate User
-	err = json.NewDecoder(res.Body).Decode(&userUpdate)
-	if err != nil {
-		fmt.Println("Couldn't decode json response from server for realtime streak update, error:", err)
-		bufio.NewScanner(os.Stdin).Scan()
-		return
-	}
-	user.ListeningStreak = userUpdate.ListeningStreak
+	fmt.Println(res.StatusCode)
+	bufio.NewScanner(os.Stdin).Scan()
 }
