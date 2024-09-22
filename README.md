@@ -1,7 +1,7 @@
 # Folklore
 The natural way to learn a language! Folklore is a CLI app that teaches you a foreign language in the most intuitive way possible. Whether you are a fresh beginner or seasoned polyglot, Folklore has a path for you. Adventure awaits!
 ![Trimmed](https://github.com/user-attachments/assets/4488580d-1a3e-48f3-bff2-c9253fdbc1a1)
-At the present moment, Folklore is only available for linux users. This will change at some point, but for now, only my fellow software engineers can embark on this journey! 
+At the present moment, Folklore is only available for linux users. This will change at some point, but for now, only my fellow software engineers can embark on this journey.
 
 If you're itching to get started, feel free to skip ahead to the quick start section. The TLDR of our mission is that stories rock and are how everybody should learn!
 ## Our Mission
