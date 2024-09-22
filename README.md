@@ -1,1 +1,1 @@
-# FolkloreClient
+# Folklore
