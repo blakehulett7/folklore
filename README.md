@@ -21,6 +21,9 @@ git clone https://github.com/blakehulett7/folklore
 ./folklore
 ## Usage
 Supported languages: Italian, Spanish, French
+
 Add languages - You can add the language you would like to learn
+
 Listen to some Folklore - This will give you stories from native speakers that you can use to learn
+
 Track Your Listening Streaks - The program will automatically keep a tally of how many days you have listened to the language in a row.
