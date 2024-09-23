@@ -11,9 +11,11 @@ One of the defining characteristics of humanity is our ability to use language. 
 This is why we created Folklore. Our mission is to build an accessible way for anyone to pick up a new language. The key to ensuring success can be found in our shared history. Long before the modern age, even before the invention of writing itself, we have used the magical power of storytelling to teach our kids how to talk. We believe that regular engagement in this rich human tradition remains the best way to learn a new language, and Folklore does exactly that. You will embark on a journey of learning the local folklore of your chosen language through the power of stories. This ensures that not only will you learn how to talk like a local, you will also get a taste of the rich culture that you are engaging with. Through this method, you can feel a stronger connection to the language and the people that use it. Our hope is that through this, the overall unity of humanity will increase!
 ## Quick Start
 ### Using Go
-Go install github.com/blakehulett7/folklore@latest
+go install github.com/blakehulett7/folklore@latest
+
+type the command "folklore" from anywhere in the terminal
 Run the terminal command folklore
 ### Direct Download
-Clone this repo
+git clone https://github.com/blakehulett7/folklore
 
-Run ./folklore
+./folklore
