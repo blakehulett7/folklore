@@ -14,11 +14,6 @@ This is why we created Folklore. Our mission is to build an accessible way for a
 go install github.com/blakehulett7/folklore@latest
 
 type the command "folklore" from anywhere in the terminal
-Run the terminal command folklore
-### Direct Download
-git clone https://github.com/blakehulett7/folklore
-
-./folklore
 ## Usage
 Supported languages: Italian, Spanish, French
 
@@ -27,3 +22,12 @@ Add languages - You can add the language you would like to learn
 Listen to some Folklore - This will give you stories from native speakers that you can use to learn
 
 Track Your Listening Streaks - The program will automatically keep a tally of how many days you have listened to the language in a row.
+## Contributing
+### Clone the repo
+git clone https://github.com/blakehulett7/folklore@latest
+### Run the project
+./folklore
+### Run the tests
+go test
+### Submit a pull request
+If you'd like to contribute, please fork the repository and open a pull request to the main branch.
