@@ -18,7 +18,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const hostUrl = "http://localhost:8080"
+const hostUrl = "https://folkloreserver-398529434999.us-central1.run.app"
 const hostVersion = "v1"
 const maxPermissions = 0777
 
