@@ -14,5 +14,6 @@ This is why we created Folklore. Our mission is to build an accessible way for a
 Go install github.com/blakehulett7/folklore@latest
 Run the terminal command folklore
 ### Direct Download
-Clone this repo\n
+Clone this repo
+
 Run ./folklore
