@@ -238,16 +238,20 @@ func GetUsernameAndPassword() (string, string) {
 
 func GetUser(token string) (User, error) {
 	url := fmt.Sprintf("%v/%v/users", hostUrl, hostVersion)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer([]byte("")))
 	if err != nil {
 		fmt.Println("error creating request:", err)
 	}
 	req.Header.Add("Authorization", token)
-	res, err := http.DefaultClient.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println("error executing request:", err)
 		return User{}, errServerDown
 	}
+	defer res.Body.Close()
 	if res.StatusCode == 401 {
 		//user the refresh token and try once more
 		return User{}, errBadToken
